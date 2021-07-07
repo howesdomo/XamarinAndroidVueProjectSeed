@@ -4095,10 +4095,13 @@ namespace Client.AndroiD
 			public const int visible_removing_fragment_view_tag = 2131230956;
 			
 			// aapt resource value: 0x7F0800ED
-			public const int withText = 2131230957;
+			public const int webView0 = 2131230957;
 			
 			// aapt resource value: 0x7F0800EE
-			public const int wrap_content = 2131230958;
+			public const int withText = 2131230958;
+			
+			// aapt resource value: 0x7F0800EF
+			public const int wrap_content = 2131230959;
 			
 			static Id()
 			{
@@ -9186,10 +9189,13 @@ namespace Client.AndroiD
 		{
 			
 			// aapt resource value: 0x7F110000
-			public const int image_share_filepaths = 2131820544;
+			public const int file_paths = 2131820544;
 			
 			// aapt resource value: 0x7F110001
-			public const int xamarin_essentials_fileprovider_file_paths = 2131820545;
+			public const int image_share_filepaths = 2131820545;
+			
+			// aapt resource value: 0x7F110002
+			public const int xamarin_essentials_fileprovider_file_paths = 2131820546;
 			
 			static Xml()
 			{

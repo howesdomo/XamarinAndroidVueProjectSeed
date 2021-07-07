@@ -2,9 +2,30 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android" 
           android:versionCode="1" 
           android:versionName="1.0" 
-          package="com.companyname.client.android">
+          package="cn.com.enpot.XAVPS">
   <uses-sdk android:minSdkVersion="21" android:targetSdkVersion="30" />
-  <application android:allowBackup="true" android:icon="@mipmap/ic_launcher" android:label="@string/app_name" android:roundIcon="@mipmap/ic_launcher_round" android:supportsRtl="true" android:theme="@style/AppTheme">
-  </application>
-  <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+  <application android:allowBackup="true"
+               android:icon="@mipmap/ic_launcher"
+               android:label="@string/app_name"
+               android:roundIcon="@mipmap/ic_launcher_round"
+               android:supportsRtl="true"
+               android:theme="@style/AppTheme"
+               android:usesCleartextTraffic="True">
+    <!-- 从Android 9.0（API级别28）开始，默认情况下禁用明文支持。因此http的url均无法在webview中加载
+    报错信息如下, XXXX网页无法加载, 因为: net::ERR_CLEARTEXT_NOT_PERMITTED
+    解决方法: 加上配置 android:usesCleartextTraffic -->
+
+    <!-- Library 设置为false的原因是, 当手头上没有斑马设备时仍然能成功运行, 不会报 INSTALL_FAILED_MISSING_SHARED_LIBRARY -->
+    <uses-library android:name="com.symbol.emdk" android:required="false" />
+
+    <!--百度定位 -->
+    <service android:name="com.baidu.location.f" android:enabled="true" android:process=":remote" />
+    <!--http://lbsyun.baidu.com/apiconsole/key -->
+    <meta-data android:name="com.baidu.lbsapi.API_KEY" android:value="xBSvbGKOfTV78b4AWgLoouF9bP805tga" />
+
+    <!--FileProvider--><!--
+    <provider android:name="android.support.v4.content.FileProvider" android:authorities="cn.com.enpot.XAVPS.fileprovider" android:exported="false" android:grantUriPermissions="true">
+      <meta-data android:name="android.support.FILE_PROVIDER_PATHS" android:resource="@xml/file_paths" />
+    </provider>-->
+  </application>  
 </manifest>
