@@ -5,6 +5,8 @@ VisualStudioVersion = 16.0.31410.357
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Client.AndroiD", "Client.AndroiD\Client.AndroiD.csproj", "{CC39087C-4511-4F7A-9CF0-708B8BD1FE7F}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Model", "Model\Model.csproj", "{5A9516C8-F35D-41D5-945C-FCE420E3BE8C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -17,6 +19,10 @@ Global
 		{CC39087C-4511-4F7A-9CF0-708B8BD1FE7F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CC39087C-4511-4F7A-9CF0-708B8BD1FE7F}.Release|Any CPU.Build.0 = Release|Any CPU
 		{CC39087C-4511-4F7A-9CF0-708B8BD1FE7F}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{5A9516C8-F35D-41D5-945C-FCE420E3BE8C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5A9516C8-F35D-41D5-945C-FCE420E3BE8C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5A9516C8-F35D-41D5-945C-FCE420E3BE8C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5A9516C8-F35D-41D5-945C-FCE420E3BE8C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

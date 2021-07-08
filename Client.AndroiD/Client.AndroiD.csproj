@@ -40,6 +40,11 @@
     <EmbedAssembliesIntoApk>False</EmbedAssembliesIntoApk>
     <MandroidI18n>CJK;West</MandroidI18n>
     <AndroidSupportedAbis>armeabi-v7a;arm64-v8a</AndroidSupportedAbis>
+    <AndroidKeyStore>true</AndroidKeyStore>
+    <AndroidSigningKeyStore>D:\SC_Github\XamarinAndroidVueProjectSeed\Client.AndroiD\Key\xamarin_KeyStore.keystore</AndroidSigningKeyStore>
+    <AndroidSigningStorePass>1qazxsw@</AndroidSigningStorePass>
+    <AndroidSigningKeyAlias>Key</AndroidSigningKeyAlias>
+    <AndroidSigningKeyPass>1qazxsw@</AndroidSigningKeyPass>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugSymbols>True</DebugSymbols>
@@ -55,6 +60,9 @@
     <EmbedAssembliesIntoApk>True</EmbedAssembliesIntoApk>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="iData9105_Scanner">
+      <HintPath>DLLs\iData9105_Scanner.dll</HintPath>
+    </Reference>
     <Reference Include="Mono.Android.Export" />
     <Reference Include="System" />
     <Reference Include="System.Xml" />
@@ -62,8 +70,22 @@
     <Reference Include="Mono.Android" />
     <Reference Include="System.Numerics" />
     <Reference Include="System.Numerics.Vectors" />
+    <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BarcodeScanner\BarcodeScanner_Zebra_BroadcastReceiver.cs" />
+    <Compile Include="BarcodeScanner\BarcodeScanner_Zebra_TC_Series.cs" />
+    <Compile Include="BarcodeScanner\FakeBarcodeScanner.cs" />
+    <Compile Include="BarcodeScanner\IBarcodeScanner.cs" />
+    <Compile Include="BarcodeScanner\NotSuppertEMDKXamarinException.cs" />
+    <Compile Include="Common\App.cs" />
+    <Compile Include="Common\Config\ConfigUtils.cs" />
+    <Compile Include="Common\Config\NativeSettingsUtils.cs" />
+    <Compile Include="Common\Config\ServiceSettingsUtils.cs" />
+    <Compile Include="Common\Config\XxxBaseSettingUtils.cs" />
+    <Compile Include="Common\StaticInfo\StaticInfo.cs" />
+    <Compile Include="Common\StaticInfo\StaticInfoInitArgs.cs" />
+    <Compile Include="Common\StaticInfo\WebSetting.cs" />
     <Compile Include="JSInterface.cs" />
     <Compile Include="MainActivity.cs" />
     <Compile Include="MyWebChromeClient.cs" />
@@ -111,8 +133,14 @@
     <Folder Include="Resources\drawable\" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="Symbol.XamarinEMDK">
+      <Version>7.0.0.14</Version>
+    </PackageReference>
     <PackageReference Include="Util.HowesDOMO">
       <Version>1.0.18-beta3</Version>
+    </PackageReference>
+    <PackageReference Include="Util.XamariN">
+      <Version>1.0.16-alpha6</Version>
     </PackageReference>
     <PackageReference Include="Xamarin.AndroidX.AppCompat" Version="1.2.0.5" />
     <PackageReference Include="Xamarin.Google.Android.Material" Version="1.0.0.1" />
@@ -120,6 +148,12 @@
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\xml\file_paths.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Model\Model.csproj">
+      <Project>{5a9516c8-f35d-41d5-945c-fce420e3be8c}</Project>
+      <Name>Model</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
