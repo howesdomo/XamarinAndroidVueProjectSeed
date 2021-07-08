@@ -10,6 +10,8 @@ using Android.Runtime;
 using Android.Views;
 using Android.Widget;
 
+using Util.XamariN;
+
 // 调用Jar包
 using Com.Android.Barcodescandemo;
 
@@ -27,7 +29,7 @@ namespace Client.Droid.BarcodeScanner
     /// V 1.0.0 - 2020-3-20 12:03:44
     /// 首次创建
     /// </summary>
-    public sealed class BarcodeScanner_iData_iScan : IBarcodeScanner, Util.XamariN.IHardwareBarcodeScanner
+    public sealed class BarcodeScanner_iData_iScan : IBarcodeScanner, IHardwareBarcodeScanner
     {
         #region Props
 

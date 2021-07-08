@@ -13,6 +13,8 @@ using Android.Widget;
 using Symbol.XamarinEMDK;
 using Symbol.XamarinEMDK.Barcode;
 
+using Util.XamariN;
+
 namespace Client.Droid.BarcodeScanner
 {
     /// <summary>
@@ -33,7 +35,7 @@ namespace Client.Droid.BarcodeScanner
     /// V 1.0.0
     /// 首次创建
     /// </summary>
-    public class BarcodeScanner_Zebra_TC_Series : Activity, EMDKManager.IEMDKListener, IBarcodeScanner, Util.XamariN.IHardwareBarcodeScanner
+    public class BarcodeScanner_Zebra_TC_Series : Activity, EMDKManager.IEMDKListener, IBarcodeScanner, IHardwareBarcodeScanner
     {
         #region Props
 
@@ -81,7 +83,7 @@ namespace Client.Droid.BarcodeScanner
 
                 System.Diagnostics.Debugger.Break();
 
-                throw new NotSuppertEMDKXamarinException();
+                throw new NotSuppert_Zebra_EMDKXamarin_Exception();
             }
             else
             {

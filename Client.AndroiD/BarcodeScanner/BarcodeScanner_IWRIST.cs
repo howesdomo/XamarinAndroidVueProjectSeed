@@ -9,6 +9,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
+using Util.XamariN;
+
 namespace Client.Droid.BarcodeScanner
 {
     /// <summary>
@@ -19,7 +21,7 @@ namespace Client.Droid.BarcodeScanner
     /// V 1.0.0 - 2021-04-15 16:20:11
     /// 首次接触这款 PDA, 编写读取扫描头的方法
     /// </summary>
-    public sealed class BarcodeScanner_IWRIST : IBarcodeScanner, Util.XamariN.IHardwareBarcodeScanner
+    public sealed class BarcodeScanner_IWRIST : IBarcodeScanner, IHardwareBarcodeScanner
     {
         #region Props
 

@@ -9,9 +9,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
+using Util.XamariN;
+
 namespace Client.Droid.BarcodeScanner
 {
-    public class BarcodeScanner_Zebra_Broadcast : IBarcodeScanner, Util.XamariN.IHardwareBarcodeScanner
+    public class BarcodeScanner_Zebra_Broadcast : IBarcodeScanner, IHardwareBarcodeScanner
     {
         #region Props
 

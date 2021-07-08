@@ -9,13 +9,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Client.AndroiD
+namespace Client.Droid
 {
     public class App
     {
-        //public static Util.XamariN.IScreen Screen { get; set; }
+        public static Util.XamariN.IScreen Screen { get; set; }
 
-        //public static Util.XamariN.IAudioPlayer AudioPlayer { get; set; }
+        public static Util.XamariN.IAudioPlayer AudioPlayer { get; set; }
 
         //public static Util.XamariN.ITTS TTS { get; set; }
 
@@ -34,6 +34,6 @@ namespace Client.AndroiD
 
         public static Util.XamariN.IHardwareBarcodeScanner HardwareBarcodeScanner { get; set; }
 
-        //public static Client.Common.IPowerManager PowerManager { get; set; }
+        public static Client.Common.IPowerManager PowerManager { get; set; }
     }
 }

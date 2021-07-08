@@ -9,7 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Client.AndroiD
+namespace Client.Droid
 {
     // 参考demo网站
     // Chromium WebView Samples

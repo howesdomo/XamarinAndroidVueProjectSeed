@@ -11,7 +11,10 @@ using System.Text;
 
 namespace Client.Droid.BarcodeScanner
 {
-    public class NotSuppertEMDKXamarinException : Exception
+    /// <summary>
+    /// 
+    /// </summary>
+    public class NotSuppert_Zebra_EMDKXamarin_Exception : Exception
     {
 
     }

@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
+using Util.XamariN;
+
 namespace Client.Droid.BarcodeScanner
 {
     /// <summary>
@@ -20,7 +22,7 @@ namespace Client.Droid.BarcodeScanner
     /// V 1.0.0
     /// 首次创建, 用于无扫码设备中
     /// </summary>
-    public class FakeBarcodeScanner : IBarcodeScanner, Util.XamariN.IHardwareBarcodeScanner
+    public class FakeBarcodeScanner : IBarcodeScanner, IHardwareBarcodeScanner
     {
         #region 单例模式
 
