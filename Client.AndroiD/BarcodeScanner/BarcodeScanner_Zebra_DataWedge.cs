@@ -13,7 +13,13 @@ using Util.XamariN;
 
 namespace Client.Droid.BarcodeScanner
 {
-    public class BarcodeScanner_Zebra_Broadcast : IBarcodeScanner, IHardwareBarcodeScanner
+    /// <summary>
+    /// V 1.0.0 - 2021-07-09 10:55:38
+    /// 首次创建, 为解决某些型号在某些安卓版本上无法使用 EMDK 的方式读取条码信息
+    /// 请到以下网址查看本设备支持使用 EMDK for Xamarin.Android
+    /// https://www.zebra.com/us/en/support-downloads/software/developer-tools/emdk-for-xamarin.html 
+    /// </summary>
+    public class BarcodeScanner_Zebra_DataWedge : IBarcodeScanner, IHardwareBarcodeScanner
     {
         #region Props
 
@@ -32,11 +38,11 @@ namespace Client.Droid.BarcodeScanner
 
         #region 单例模式
 
-        private static BarcodeScanner_Zebra_Broadcast _Instance_ { get; set; }
+        private static BarcodeScanner_Zebra_DataWedge _Instance_ { get; set; }
 
         private static readonly object _LOCK_ = new object();
 
-        public static BarcodeScanner_Zebra_Broadcast GetInstance()
+        public static BarcodeScanner_Zebra_DataWedge GetInstance()
         {
             if (_Instance_ == null)
             {
@@ -44,7 +50,7 @@ namespace Client.Droid.BarcodeScanner
                 {
                     if (_Instance_ == null)
                     {
-                        _Instance_ = new BarcodeScanner_Zebra_Broadcast();
+                        _Instance_ = new BarcodeScanner_Zebra_DataWedge();
                     }
                 }
             }
@@ -54,17 +60,11 @@ namespace Client.Droid.BarcodeScanner
 
         #endregion
 
-        private BarcodeScanner_Zebra_Broadcast()
-        {
-            //mScanner = new IWRIST_Scanner();
-            //// 扫描功能
-            //mScanner.Open();
-            //mScanner.SetOutputMode(2); // 使用广播模式
-            //mScanner.EnablePlayBeep(false); // 关闭扫描声音
-            //mScanner.DefaultSetting();
+        const string FilterAction = "cn.com.howe";
 
-            // mFilter = new IntentFilter("com.android.server.scannerservice.broadcast");
-            mFilter = new IntentFilter("barcodescanner.RECVR");
+        private BarcodeScanner_Zebra_DataWedge()
+        {
+            mFilter = new IntentFilter(FilterAction);
             mReceiver = new BroadcastReceiver_Zebra();
         }
 
@@ -84,18 +84,22 @@ namespace Client.Droid.BarcodeScanner
             if (mIsRegistered == false)
             {
                 EnableDataWedge();
+
                 
-                bool isUpdated = Xamarin.Essentials.Preferences.Get("datawedge_updated", false);
-                if (!isUpdated)
+                int localProfileVersion = Xamarin.Essentials.Preferences.Get(Profile_Key, defaultValue: 0);
+                
+                if (localProfileVersion == 0)
                 {
                     CreateProfile();
-                    UpdateProfile();
-
-                    // Xamarin.Essentials.Preferences.Set("datawedge_updated", true);
                 }
 
-                SwitchToProfile();
+                if (localProfileVersion < LatestProfileVersion)
+                {                    
+                    UpdateProfile();
+                    Xamarin.Essentials.Preferences.Set(Profile_Key, LatestProfileVersion);
+                }                
 
+                SwitchToProfile();
 
                 Android.App.Application.Context.RegisterReceiver(mReceiver, mFilter);
                 mIsRegistered = true;
@@ -117,22 +121,20 @@ namespace Client.Droid.BarcodeScanner
 
         public void EnabledScanner()
         {
-            // mScanner.Open();
+            EnableDataWedge();
         }
 
         public void DisabledScanner()
         {
-            // mScanner.Close();
+            DisableDataWedge();
         }
 
         #endregion
 
+        #region 本程序向 DataWedge 新增配置文件, 然后启用配置文件
 
-        // 配置wedge
-
-        #region MyRegion
-
-        static string PROFILE_NAME = "XamAndroidDataWedge";
+        public const string Profile_Key = "DataWedge_ProfileVersion";        
+        static string PROFILE_NAME = "XPFS"; // TODO 如何动态地获取 MainActivity 的 Label
 
         public static string ACTION_DATAWEDGE_FROM_6_2 = "com.symbol.datawedge.api.ACTION";
         public static string EXTRA_CREATE_PROFILE = "com.symbol.datawedge.api.CREATE_PROFILE";
@@ -142,7 +144,10 @@ namespace Client.Droid.BarcodeScanner
         public static string DATAWEDGE_EXTRA_KEY_SCANNER_TRIGGER_CONTROL = "com.symbol.datawedge.api.SOFT_SCAN_TRIGGER";
         public static string DATAWEDGE_EXTRA_VALUE_TOGGLE_SCANNER = "TOGGLE_SCANNING";
 
-        private void EnableDataWedge()
+        /// <summary>
+        /// DataWedge 设置为启用状态
+        /// </summary>
+        void EnableDataWedge()
         {
             Intent i = new Intent();
             i.SetAction(ACTION_DATAWEDGE_FROM_6_2);
@@ -150,17 +155,34 @@ namespace Client.Droid.BarcodeScanner
             Android.App.Application.Context.SendBroadcast(i);
         }
 
+        /// <summary>
+        /// DataWedge 设置为关闭状态
+        /// </summary>
+        void DisableDataWedge()
+        {
+            Intent i = new Intent();
+            i.SetAction(ACTION_DATAWEDGE_FROM_6_2);
+            i.PutExtra(EXTRA_ENABLE_DATAWEDGE, false);
+            Android.App.Application.Context.SendBroadcast(i);
+        }
 
-
-        private void CreateProfile()
+        /// <summary>
+        /// 在 DataWedge 中新建配置文件
+        /// </summary>
+        void CreateProfile()
         {
             Intent i = new Intent();
             i.SetAction(ACTION_DATAWEDGE_FROM_6_2);
             i.PutExtra(EXTRA_CREATE_PROFILE, PROFILE_NAME);
             Android.App.Application.Context.SendBroadcast(i);
         }
+                
+        public const int LatestProfileVersion = 1; // 当配置代码有更新, Version + 1
 
-        private void UpdateProfile()
+        /// <summary>
+        /// 更新配置, 更新代码后请 LatestProfileVersion + 1
+        /// </summary>
+        void UpdateProfile()
         {
             Bundle profileConfig = new Bundle();
             profileConfig.PutString("PROFILE_NAME", PROFILE_NAME); // Set the profile name
@@ -189,6 +211,9 @@ namespace Client.Droid.BarcodeScanner
             barcodeProps.PutString("decoder_pdf417", "true");
             barcodeProps.PutString("decoder_qrcode", "true");
 
+            
+            barcodeProps.PutString("decode_audio_feedback_uri", ""); // 去掉扫描成功音效
+
             barcodeConfig.PutBundle("PARAM_LIST", barcodeProps);
             profileConfig.PutBundle("PLUGIN_CONFIG", barcodeConfig);
 
@@ -205,23 +230,14 @@ namespace Client.Droid.BarcodeScanner
             Bundle intentProps = new Bundle();
             intentProps.PutString("intent_output_enabled", "true");
             // intentProps.PutString("intent_action", DataWedgeReceiver.IntentAction); // We can use this when we're going to define the DataWedgeReceiver class
-            intentProps.PutString("intent_action", "barcodescanner.RECVR");
-            intentProps.PutString("intent_delivery", "2");
+            intentProps.PutString("intent_action", FilterAction);
+            intentProps.PutString("intent_delivery", "2");            
             intentConfig.PutBundle("PARAM_LIST", intentProps);
             profileConfig.PutBundle("PLUGIN_CONFIG", intentConfig);
             SendDataWedgeIntentWithExtra(ACTION_DATAWEDGE_FROM_6_2, EXTRA_SET_CONFIG, profileConfig);
         }
 
-
-        private void SwitchToProfile()
-        {
-            Intent i = new Intent();
-            i.SetAction(ACTION_DATAWEDGE_FROM_6_2);
-            i.PutExtra(EXTRA_SWITCH_TO_PROFILE, PROFILE_NAME);
-            Android.App.Application.Context.SendBroadcast(i);
-        }
-
-        private static void SendDataWedgeIntentWithExtra(String action, String extraKey, Bundle extraValue)
+        void SendDataWedgeIntentWithExtra(String action, String extraKey, Bundle extraValue)
         {
             Intent dwIntent = new Intent();
             dwIntent.SetAction(action);
@@ -233,6 +249,13 @@ namespace Client.Droid.BarcodeScanner
             Android.App.Application.Context.SendBroadcast(dwIntent);
         }
 
+        void SwitchToProfile()
+        {
+            Intent i = new Intent();
+            i.SetAction(ACTION_DATAWEDGE_FROM_6_2);
+            i.PutExtra(EXTRA_SWITCH_TO_PROFILE, PROFILE_NAME);
+            Android.App.Application.Context.SendBroadcast(i);
+        }
 
         #endregion
     }
@@ -241,31 +264,22 @@ namespace Client.Droid.BarcodeScanner
     {
         public override void OnReceive(Context context, Intent intent)
         {
-            try
-            {
-                // TODO 获取 byte[] rawData 
-                var rawData = intent.GetSerializableExtra("com.symbol.datawedge.decode_data");
+            // TODO 获取 byte[] rawData 
+            var rawData = intent.GetSerializableExtra("com.symbol.datawedge.decode_data");
 
+            var scanModel = new Common.BarcodeScanModel
+            (
+                _BarcodeContent: intent.GetStringExtra("com.symbol.datawedge.data_string"),
+                _RawBarcodeContent: null,
+                _BarcodeType: intent.GetStringExtra("com.symbol.datawedge.label_type"),
+                _ScanTime: DateTime.Now
+            );
 
-                var scanModel = new Common.BarcodeScanModel
-                (
-                    _BarcodeContent: intent.GetStringExtra("com.symbol.datawedge.data_string"),
-                    _RawBarcodeContent: null,
-                    _BarcodeType: intent.GetStringExtra("com.symbol.datawedge.label_type"),
-                    _ScanTime: DateTime.Now
-                );
+            // 发出扫描成功音效
+            App.AudioPlayer.PlayBeep();
 
-                // string bs = intent.GetStringExtra("com.symbol.datawedge.decode_data"); // 获取到 null 值
-
-                // String scanResult = intent.getStringExtra("scannerdata").trim();
-                //if (scanResult.equals("") || scanResult == null) return;
-                //String js = String.format("javascript:callJsFunction('%s')", scanResult);
-                //webView.loadUrl(js);
-            }
-            catch (Exception e)
-            {
-                // showErr(e.toString());
-            }
+            // ** 核心 ** 调用统一接口
+            Common.BarcodeScanner.OnBarcodeScan(this, scanModel);
         }
     }
 }

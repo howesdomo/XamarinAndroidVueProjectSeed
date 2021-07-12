@@ -25,6 +25,15 @@ namespace Client.Droid
 
         [Android.Webkit.JavascriptInterface]
         [Java.Interop.Export]
+        public void callAndroid(string obj)
+        {
+            System.Diagnostics.Debug.WriteLine(obj);
+
+            System.Diagnostics.Debugger.Break();
+        }
+
+        [Android.Webkit.JavascriptInterface]
+        [Java.Interop.Export]
         public void ShowToast(string msg)
         {
             Toast.MakeText(mContext, msg, ToastLength.Short).Show();
@@ -36,5 +45,31 @@ namespace Client.Droid
             string script = string.Format("javascript:getContactList('%s','%s')", 'A', 'B');
             mWebView.EvaluateJavascript(script, null);
         }
+
+        #region 屏幕
+
+        [Android.Webkit.JavascriptInterface]
+        [Java.Interop.Export]
+        public void Screen_ForceLandscapeRight()
+        {
+            App.Screen.ForceLandscapeRight();
+        }
+
+
+        [Android.Webkit.JavascriptInterface]
+        [Java.Interop.Export]
+        public void Screen_ForceLandscapeLeft()
+        {
+            App.Screen.ForceLandscapeLeft();
+        }
+
+        [Android.Webkit.JavascriptInterface]
+        [Java.Interop.Export]
+        public void Screen_Unspecified()
+        {
+            App.Screen.Unspecified();
+        }
+
+        #endregion
     }
 }

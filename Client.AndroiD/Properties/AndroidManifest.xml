@@ -6,7 +6,8 @@
     报错信息如下, XXXX网页无法加载, 因为: net::ERR_CLEARTEXT_NOT_PERMITTED
     解决方法: 加上配置 android:usesCleartextTraffic -->
     <!-- Library 设置为false的原因是, 当手头上没有斑马设备时仍然能成功运行, 不会报 INSTALL_FAILED_MISSING_SHARED_LIBRARY -->
-    <uses-library android:name="com.symbol.emdk" android:required="false" />
+    <!--<uses-library android:name="com.symbol.emdk" android:required="false" />-->
+    
     <!--百度定位 -->
     <service android:name="com.baidu.location.f" android:enabled="true" android:process=":remote" />
     <!--http://lbsyun.baidu.com/apiconsole/key -->

@@ -13,8 +13,6 @@ using Android.Widget;
 using Symbol.XamarinEMDK;
 using Symbol.XamarinEMDK.Barcode;
 
-using Util.XamariN;
-
 namespace Client.Droid.BarcodeScanner
 {
     /// <summary>
@@ -35,7 +33,7 @@ namespace Client.Droid.BarcodeScanner
     /// V 1.0.0
     /// 首次创建
     /// </summary>
-    public class BarcodeScanner_Zebra_TC_Series : Activity, EMDKManager.IEMDKListener, IBarcodeScanner, IHardwareBarcodeScanner
+    public class BarcodeScanner_Zebra_EMDK : Activity, EMDKManager.IEMDKListener, IBarcodeScanner, Util.XamariN.IHardwareBarcodeScanner
     {
         #region Props
 
@@ -49,11 +47,11 @@ namespace Client.Droid.BarcodeScanner
 
         #region 单例模式
 
-        private static BarcodeScanner_Zebra_TC_Series _Instance_ { get; set; }
+        private static BarcodeScanner_Zebra_EMDK _Instance_ { get; set; }
 
         private static readonly object _LOCK_ = new object();
 
-        public static BarcodeScanner_Zebra_TC_Series GetInstance()
+        public static BarcodeScanner_Zebra_EMDK GetInstance()
         {
             if (_Instance_ == null)
             {
@@ -61,7 +59,7 @@ namespace Client.Droid.BarcodeScanner
                 {
                     if (_Instance_ == null)
                     {
-                        _Instance_ = new BarcodeScanner_Zebra_TC_Series();
+                        _Instance_ = new BarcodeScanner_Zebra_EMDK();
                     }
                 }
             }
@@ -71,7 +69,7 @@ namespace Client.Droid.BarcodeScanner
 
         #endregion
 
-        private BarcodeScanner_Zebra_TC_Series()
+        private BarcodeScanner_Zebra_EMDK()
         {
             EMDKResults results = EMDKManager.GetEMDKManager(Android.App.Application.Context, this);
 
@@ -81,7 +79,7 @@ namespace Client.Droid.BarcodeScanner
                 System.Diagnostics.Debug.WriteLine("请到以下网址查看本设备支持使用 EMDK for Xamarin.Android");
                 System.Diagnostics.Debug.WriteLine("https://www.zebra.com/us/en/support-downloads/software/developer-tools/emdk-for-xamarin.html");
 
-                System.Diagnostics.Debugger.Break();
+                // System.Diagnostics.Debugger.Break();
 
                 throw new NotSuppert_Zebra_EMDKXamarin_Exception();
             }
@@ -497,7 +495,7 @@ namespace Client.Droid.BarcodeScanner
         {
             mScanner.Disable();
         }
-
+        
         #endregion
     }
 }

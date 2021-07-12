@@ -12,15 +12,14 @@ using System.IO;
 
 
 namespace Client.Droid
-{    
-    [Activity(Label = "XAVPS",
+{
+    [Activity(Label = "@string/app_name",
         Icon = "@mipmap/icon",
         RoundIcon = "@mipmap/icon_round",
         Theme = "@style/MainTheme.Splash", // 默认设置 // Theme = "@style/MainTheme", // 显示启动页设置 // Theme = "@style/MainTheme.Splash", 
         MainLauncher = true,
-        ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation
-        | ConfigChanges.UiMode // 由于 iData 9105 ( 安卓 5.1 ) 打开 WebView 会报错, 加上此配置后能正常使用
-        )]
+        ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation | ConfigChanges.UiMode // 由于 iData 9105 ( 安卓 5.1 ) 打开 WebView 会报错, 加上此配置后能正常使用
+    )]
     public class MainActivity : AppCompatActivity
     {
         public Android.Webkit.WebView mWebView { get; set; }
@@ -34,8 +33,20 @@ namespace Client.Droid
             SetContentView(Resource.Layout.activity_main);
 
             init();
+
+            initUI();
             initWebView();
         }
+
+        void initUI()
+        {
+            var btnReloadWebView = FindViewById<Android.Widget.Button>(Resource.Id.btnReloadWebView);
+            btnReloadWebView.Click += (s, e) => { mWebView.LoadUrl(mUrl); };
+
+            var btnTestJS = FindViewById<Android.Widget.Button>(Resource.Id.btnTestJS);
+            btnTestJS.Click += (s, e) => { mWebView.EvaluateJavascript("javascript:callJsFunction('Hello 你好啊')", null); };
+        }
+
 
         private void init()
         {
@@ -256,39 +267,39 @@ namespace Client.Droid
                 try
                 {
                     // 优先尝试使用 EMDK for Xamarin 的方式获取扫描内容
-                    var tc_Serial = Droid.BarcodeScanner.BarcodeScanner_Zebra_TC_Series.GetInstance();
-                    mBarcodeScanner = tc_Serial;
-                    App.HardwareBarcodeScanner = tc_Serial; // 用于控制扫描头硬开关
+                    var zebra_EMDK = BarcodeScanner.BarcodeScanner_Zebra_EMDK.GetInstance();
+                    mBarcodeScanner = zebra_EMDK;
+                    App.HardwareBarcodeScanner = zebra_EMDK; // 用于控制扫描头硬开关
                 }
-                catch (Droid.BarcodeScanner.NotSuppert_Zebra_EMDKXamarin_Exception)
+                catch (BarcodeScanner.NotSuppert_Zebra_EMDKXamarin_Exception)
                 {
                     // 使用获取 DataWedge 广播的方式读取扫描内容
-                    var zebra_DataWedge_Broadcast = Droid.BarcodeScanner.BarcodeScanner_Zebra_Broadcast.GetInstance();
-                    mBarcodeScanner = zebra_DataWedge_Broadcast;
-                    // App.HardwareBarcodeScanner = zebraBBB; // TODO
+                    var zebra_DataWedge = BarcodeScanner.BarcodeScanner_Zebra_DataWedge.GetInstance();
+                    mBarcodeScanner = zebra_DataWedge;
+                    App.HardwareBarcodeScanner = zebra_DataWedge; // 用于控制扫描头硬开关
                 }
             }
-            //else if
-            //(
-            //    Xamarin.Essentials.DeviceInfo.Manufacturer.Equals("Android", StringComparison.CurrentCultureIgnoreCase) &&
-            //    Xamarin.Essentials.DeviceInfo.Name.Equals("50 Series", StringComparison.CurrentCultureIgnoreCase)
-            //)
-            //{
-            //    // iData 9105
-            //    var idata9105 = BarcodeScanner.BarcodeScanner_iData_iScan.GetInstance();
-            //    mBarcodeScanner = idata9105;
-            //    App.HardwareBarcodeScanner = idata9105; // 用于控制扫描头硬开关
-            //}
-            //else if
-            //(
-            //    Xamarin.Essentials.DeviceInfo.Manufacturer.Equals("IWRIST", StringComparison.CurrentCultureIgnoreCase)
-            //)
-            //{
-            //    // 测试成功的型号 IWRIST i7
-            //    var i = BarcodeScanner.BarcodeScanner_IWRIST.GetInstance();
-            //    mBarcodeScanner = i;
-            //    App.HardwareBarcodeScanner = i;
-            //}
+            else if
+            (
+                Xamarin.Essentials.DeviceInfo.Manufacturer.Equals("Android", StringComparison.CurrentCultureIgnoreCase) &&
+                Xamarin.Essentials.DeviceInfo.Name.Equals("50 Series", StringComparison.CurrentCultureIgnoreCase)
+            )
+            {
+                // iData 9105
+                var idata9105 = BarcodeScanner.BarcodeScanner_iData_iScan.GetInstance();
+                mBarcodeScanner = idata9105;
+                App.HardwareBarcodeScanner = idata9105; // 用于控制扫描头硬开关
+            }
+            else if
+            (
+                Xamarin.Essentials.DeviceInfo.Manufacturer.Equals("IWRIST", StringComparison.CurrentCultureIgnoreCase)
+            )
+            {
+                // 测试成功的型号 IWRIST i7
+                var i = BarcodeScanner.BarcodeScanner_IWRIST.GetInstance();
+                mBarcodeScanner = i;
+                App.HardwareBarcodeScanner = i;
+            }
             else
             {
                 var fakeBarcodeScanner = Droid.BarcodeScanner.FakeBarcodeScanner.GetInstance();
@@ -301,6 +312,8 @@ namespace Client.Droid
             //// android 设置全局字体
             //setDefaultFont("Fonts/FZFSJ.ttf");
         }
+
+        public string mUrl { get; set; }
 
         void initWebView()
         {
@@ -327,11 +340,18 @@ namespace Client.Droid
             mWebView.SetWebViewClient(new MyWebViewClient(this.Assets));
             mWebView.SetWebChromeClient(new MyWebChromeClient());
 
-            string url = "http://192.168.90.104:8077/";
+            mUrl = "http://192.168.137.1:8080/";
             //String url = "file:///android_asset/vue/index.html";
-            mWebView.LoadUrl(url);
+            mWebView.AddJavascriptInterface(new JSInterface(this, mWebView), name: "$android");
 
-            mWebView.AddJavascriptInterface(new JSInterface(this, mWebView), name: "Android");
+            mWebView.LoadUrl(mUrl);
+
+            Common.BarcodeScanner.BarcodeScanEvent += new EventHandler<Common.BarcodeScanModel>(v);
+        }
+
+        void v(object o, Common.BarcodeScanModel e)
+        {
+            // mWebView
         }
 
         public override void OnBackPressed()
