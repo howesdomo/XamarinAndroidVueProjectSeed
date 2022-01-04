@@ -35,5 +35,7 @@ namespace Client.Droid
         public static Util.XamariN.IHardwareBarcodeScanner HardwareBarcodeScanner { get; set; }
 
         public static Client.Common.IPowerManager PowerManager { get; set; }
+
+        public static ZXing.Mobile.MobileBarcodeScanner Scanner {get;set;}
     }
 }

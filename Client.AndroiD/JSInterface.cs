@@ -71,5 +71,26 @@ namespace Client.Droid
         }
 
         #endregion
+
+        #region ZXing Barcode Scanner
+
+        [Android.Webkit.JavascriptInterface]
+        [Java.Interop.Export]
+        public async void ZXingScanner_Scan()
+        {
+            var result = await App.Scanner.Scan();
+
+            if (result != null)
+            {                
+                var jsonStr = Util.JsonUtils.SerializeObject(new Common.BarcodeScanModel(result.Text, result.BarcodeFormat.ToString(), DateTime.Now, null));
+                var jsScript = "javascript:callJsFunction({0})".FormatWith(jsonStr);
+                Xamarin.Essentials.MainThread.BeginInvokeOnMainThread(() =>
+                {
+                    mWebView.EvaluateJavascript(jsScript, null);
+                });
+            }
+        }
+
+        #endregion
     }
 }

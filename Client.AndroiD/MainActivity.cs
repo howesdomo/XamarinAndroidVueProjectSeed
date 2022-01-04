@@ -16,7 +16,7 @@ namespace Client.Droid
     [Activity(Label = "@string/app_name",
         Icon = "@mipmap/icon",
         RoundIcon = "@mipmap/icon_round",
-        Theme = "@style/MainTheme.Splash", // 默认设置 // Theme = "@style/MainTheme", // 显示启动页设置 // Theme = "@style/MainTheme.Splash", 
+        Theme = "@style/MainTheme", // 默认设置 // Theme = "@style/MainTheme", // 显示启动页设置 // Theme = "@style/MainTheme.Splash", 
         MainLauncher = true,
         ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation | ConfigChanges.UiMode // 由于 iData 9105 ( 安卓 5.1 ) 打开 WebView 会报错, 加上此配置后能正常使用
     )]
@@ -251,8 +251,14 @@ namespace Client.Droid
             //// 初始化 Acr.UserDialogs
             //Acr.UserDialogs.UserDialogs.Init(this);
 
-            //// 初始化条码扫描器
-            //ZXing.Net.Mobile.Forms.Android.Platform.Init();
+            // 初始化条码扫描器
+            // ZXing.Net.Mobile.Forms.Android.Platform.Init(); // Xamarin.Forms 版本
+
+            // 安卓版本
+            ZXing.Mobile.MobileBarcodeScanner.Initialize(Application);
+            App.Scanner = new ZXing.Mobile.MobileBarcodeScanner();
+
+
 
             //// FFImage
             //FFImageLoading.Forms.Platform.CachedImageRenderer.Init(enableFastRenderer: true);
@@ -264,20 +270,20 @@ namespace Client.Droid
             // Zebra TC-20 = "Zebra", Zebra TC-25 = "Zebra Technologies"
             if (Xamarin.Essentials.DeviceInfo.Manufacturer.Contains("Zebra", StringComparison.CurrentCultureIgnoreCase))
             {
-                try
-                {
-                    // 优先尝试使用 EMDK for Xamarin 的方式获取扫描内容
-                    var zebra_EMDK = BarcodeScanner.BarcodeScanner_Zebra_EMDK.GetInstance();
-                    mBarcodeScanner = zebra_EMDK;
-                    App.HardwareBarcodeScanner = zebra_EMDK; // 用于控制扫描头硬开关
-                }
-                catch (BarcodeScanner.NotSuppert_Zebra_EMDKXamarin_Exception)
-                {
+                //try
+                //{
+                //    // 优先尝试使用 EMDK for Xamarin 的方式获取扫描内容
+                //    var zebra_EMDK = BarcodeScanner.BarcodeScanner_Zebra_EMDK.GetInstance();
+                //    mBarcodeScanner = zebra_EMDK;
+                //    App.HardwareBarcodeScanner = zebra_EMDK; // 用于控制扫描头硬开关
+                //}
+                //catch (BarcodeScanner.NotSuppert_Zebra_EMDKXamarin_Exception)
+                //{
                     // 使用获取 DataWedge 广播的方式读取扫描内容
                     var zebra_DataWedge = BarcodeScanner.BarcodeScanner_Zebra_DataWedge.GetInstance();
                     mBarcodeScanner = zebra_DataWedge;
                     App.HardwareBarcodeScanner = zebra_DataWedge; // 用于控制扫描头硬开关
-                }
+                //}
             }
             else if
             (
@@ -340,8 +346,9 @@ namespace Client.Droid
             mWebView.SetWebViewClient(new MyWebViewClient(this.Assets));
             mWebView.SetWebChromeClient(new MyWebChromeClient());
 
-            mUrl = "http://192.168.137.1:8080/";
-            //String url = "file:///android_asset/vue/index.html";
+            // mUrl = "http://192.168.90.215:8004/";            
+            mUrl = "file:android_asset/vue/index.html";
+
             mWebView.AddJavascriptInterface(new JSInterface(this, mWebView), name: "$android");
 
             mWebView.LoadUrl(mUrl);
